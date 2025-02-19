@@ -66,40 +66,78 @@ class _LoginScreenViewState extends State<LoginScreenView> {
   }
 
   Widget _buildCustomEmailView(BuildContext context) {
-    return CustomTextField(
-      hintText: "Email",
-      prefixIcon: const Icon(Icons.email_outlined),
-      keyboardType: TextInputType.emailAddress,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your email';
-        }
-        return null;
-      },
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        // shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: CustomTextField(
+        hintText: "Email",
+        prefixIcon: const Icon(Icons.email_outlined),
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your email';
+          }
+          return null;
+        },
+      ),
     );
   }
 
   Widget _buildCustomPasswordView(BuildContext context) {
-    return CustomTextField(
-      hintText: "Password",
-      obscureText: !_isPasswordVisible,
-      prefixIcon: const Icon(Icons.lock_outline),
-      suffixIcon: IconButton(
-        icon: Icon(
-          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        // shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: CustomTextField(
+        hintText: "Password",
+        obscureText: !_isPasswordVisible,
+        prefixIcon: const Icon(Icons.lock_outline),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: () {
+            setState(() {
+              _isPasswordVisible = !_isPasswordVisible;
+            });
+          },
         ),
-        onPressed: () {
-          setState(() {
-            _isPasswordVisible = !_isPasswordVisible;
-          });
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your password';
+          }
+          return null;
         },
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your password';
-        }
-        return null;
-      },
     );
   }
 
@@ -119,23 +157,44 @@ class _LoginScreenViewState extends State<LoginScreenView> {
   }
 
   Widget _buildButtonView(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          context.go('/home');
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: appColor,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+          ),
+        ],
       ),
-      child: const Text(
-        "Login",
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: ElevatedButton(
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            context.go('/home');
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: appColor,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        child: Text(
+          "Login",
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).primaryColor),
+        ),
       ),
     );
   }
@@ -199,9 +258,26 @@ class _LoginScreenViewState extends State<LoginScreenView> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
+          // shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              offset: const Offset(4, 4),
+              blurRadius: 10,
+            ),
+            BoxShadow(
+              color: Colors.white.withOpacity(0.8),
+              offset: const Offset(-4, -4),
+              blurRadius: 10,
+            ),
+          ],
         ),
+        // decoration: BoxDecoration(
+        //   color: Colors.white.withOpacity(0.1),
+        //   borderRadius: BorderRadius.circular(8),
+        // ),
         child: SvgPicture.asset(
           icon,
           height: 24,
