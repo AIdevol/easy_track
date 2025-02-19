@@ -38,9 +38,9 @@ _headerDetailsView(BuildContext context) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Habitron",
+            "Easy Track",
             style: TextStyle(
-                fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+                fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold),
           ),
           Text(
             "Welcome, Devesh",
@@ -53,9 +53,28 @@ _headerDetailsView(BuildContext context) {
       ),
       GestureDetector(
         onTap: () => context.go('/profile'),
-        child: CircleAvatar(
-          radius: 25,
-          backgroundImage: AssetImage(appIcon),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            // borderRadius: BorderRadius.circular(20),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                offset: const Offset(4, 4),
+                blurRadius: 10,
+              ),
+              BoxShadow(
+                color: Colors.white.withOpacity(0.8),
+                offset: const Offset(-4, -4),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: CircleAvatar(
+            radius: 30,
+            backgroundImage: AssetImage(appIcon),
+          ),
         ),
       )
     ],
@@ -66,19 +85,78 @@ _headerDetailsView(BuildContext context) {
 
 _buttonView(BuildContext context) {
   return InkWell(
-    onTap: () {
-      context.go("/createTask");
-    },
-    child: CustomContainer(
-      outerShadow: CustomContainer.softOuterShadow(),
-      backgroundColor: appColor,
-      height: 70,
-      width: 70,
-      borderRadius: 40,
-      child: Icon(
-        Icons.add,
-        size: 45,
-      ),
-    ),
-  );
+      onTap: () {
+        context.go("/createTask");
+      },
+      child: Stack(
+        children: [
+          // Outer Container
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              // borderRadius: BorderRadius.circular(20),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  offset: const Offset(4, 4),
+                  blurRadius: 10,
+                ),
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.8),
+                  offset: const Offset(-4, -4),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Image.asset(
+                addIcon,
+                height: 30,
+                width: 30,
+                fit: BoxFit.contain,
+                color: Colors.black,
+              ),
+            ),
+          ),
+
+          // Inner Shadow Layer
+          ClipRRect(
+            borderRadius: BorderRadius.circular(75),
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                // borderRadius: BorderRadius.circular(20),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    offset: const Offset(-4, -4),
+                    blurRadius: 10,
+                    spreadRadius: 3,
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.8),
+                    offset: const Offset(4, 4),
+                    blurRadius: 10,
+                    spreadRadius: 3,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Image.asset(
+                  addIcon,
+                  height: 30,
+                  width: 30,
+                  fit: BoxFit.contain,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ));
 }

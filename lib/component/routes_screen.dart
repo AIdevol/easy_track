@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../app/presentation/home/home_screen.dart';
 import '../app/presentation/screen_launcher/screen_launcher_view.dart';
+import '../main.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -35,3 +36,9 @@ final GoRouter router = GoRouter(
     ),
   ],
 );
+
+class LoggerX {
+  static void write(String text, {bool isError = false}) {
+    Future.microtask(() => isError ? log.v(text) : log.i(text));
+  }
+}
