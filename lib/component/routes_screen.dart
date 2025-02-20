@@ -2,6 +2,7 @@ import 'package:app_task/app/create_task/create_task_view.dart';
 import 'package:app_task/auth/login/login_screen_view.dart';
 import 'package:app_task/app/presentation/profile/profile_screen_view.dart';
 import 'package:app_task/app/profile_view/settings/settings_view_screen.dart';
+import 'package:app_task/auth/signUp/singup_view_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../app/presentation/home/home_screen.dart';
@@ -17,6 +18,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) => LoginScreenView(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => SignUpScreenView(),
     ),
     GoRoute(
       path: '/home',

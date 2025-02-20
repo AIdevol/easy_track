@@ -1,4 +1,4 @@
-import 'package:app_task/model/task_model.dart';
+import 'package:app_task/app/create_task/model/task_model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';

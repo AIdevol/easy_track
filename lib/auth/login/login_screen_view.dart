@@ -209,7 +209,7 @@ class _LoginScreenViewState extends State<LoginScreenView> {
         ),
         TextButton(
           onPressed: () {
-            // Navigate to sign up screen
+            context.go('/signup');
           },
           child: Text(
             'Sign Up',
