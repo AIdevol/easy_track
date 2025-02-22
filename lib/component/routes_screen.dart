@@ -1,4 +1,5 @@
 import 'package:app_task/app/create_task/create_task_view.dart';
+import 'package:app_task/auth/forgot_password/forgot_password.dart';
 import 'package:app_task/auth/login/login_screen_view.dart';
 import 'package:app_task/app/presentation/profile/profile_screen_view.dart';
 import 'package:app_task/app/profile_view/settings/settings_view_screen.dart';
@@ -22,6 +23,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/signup',
       builder: (context, state) => SignUpScreenView(),
+    ),
+    GoRoute(
+      path: '/forgotpass',
+      builder: (context, state) => ForgotPasswordView(),
     ),
     GoRoute(
       path: '/home',

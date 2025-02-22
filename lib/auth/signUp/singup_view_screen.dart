@@ -43,15 +43,26 @@ class _SignUpScreenViewState extends State<SignUpScreenView> {
                 _buildCustomTextField(
                     "Phone Number", Icons.phone, TextInputType.phone),
                 const SizedBox(height: 16),
-                _buildCustomPasswordField("Password", _isPasswordVisible, () {
-                  setState(() => _isPasswordVisible = !_isPasswordVisible);
-                }),
+                _buildCustomPasswordField(
+                  "Password",
+                  _isPasswordVisible,
+                  () {
+                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                  },
+                  _isPasswordVisible ? Theme.of(context).primaryColor : null,
+                ),
                 const SizedBox(height: 16),
                 _buildCustomPasswordField(
-                    "Confirm Password", _isConfirmPasswordVisible, () {
-                  setState(() =>
-                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
-                }),
+                  "Confirm Password",
+                  _isConfirmPasswordVisible,
+                  () {
+                    setState(() =>
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
+                  },
+                  _isConfirmPasswordVisible
+                      ? Theme.of(context).primaryColor
+                      : null,
+                ),
                 const SizedBox(height: 16),
                 _buildCustomTextField("Address", Icons.home, TextInputType.text,
                     maxLines: 3),
@@ -76,36 +87,75 @@ class _SignUpScreenViewState extends State<SignUpScreenView> {
   Widget _buildCustomTextField(
       String hintText, IconData icon, TextInputType keyboardType,
       {int maxLines = 1}) {
-    return CustomTextField(
-      hintText: hintText,
-      prefixIcon: Icon(icon),
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your $hintText';
-        }
-        return null;
-      },
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        // shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: CustomTextField(
+        hintText: hintText,
+        prefixIcon: Icon(icon),
+        keyboardType: keyboardType,
+        maxLines: maxLines,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your $hintText';
+          }
+          return null;
+        },
+      ),
     );
   }
 
-  Widget _buildCustomPasswordField(
-      String hintText, bool isVisible, VoidCallback toggleVisibility) {
-    return CustomTextField(
-      hintText: hintText,
-      obscureText: !isVisible,
-      prefixIcon: const Icon(Icons.lock_outline),
-      suffixIcon: IconButton(
-        icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off),
-        onPressed: toggleVisibility,
+  Widget _buildCustomPasswordField(String hintText, bool isVisible,
+      VoidCallback toggleVisibility, Color? color) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        // shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+          ),
+        ],
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your $hintText';
-        }
-        return null;
-      },
+      child: CustomTextField(
+        hintText: hintText,
+        obscureText: !isVisible,
+        prefixIcon: const Icon(Icons.lock_outline),
+        suffixIcon: IconButton(
+          icon: Icon(isVisible ? Icons.visibility : Icons.visibility_off),
+          color: color,
+          onPressed: toggleVisibility,
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter your $hintText';
+          }
+          return null;
+        },
+      ),
     );
   }
 
@@ -124,24 +174,43 @@ class _SignUpScreenViewState extends State<SignUpScreenView> {
   }
 
   Widget _buildSignUpButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          context.go('/home');
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: appColor,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        // shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+          ),
+        ],
       ),
-      child: Text(
-        "Sign Up",
-        style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor),
+      child: ElevatedButton(
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            context.go('/home');
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: appColor,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Text(
+          "Sign Up",
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).primaryColor),
+        ),
       ),
     );
   }

@@ -70,7 +70,6 @@ class _LoginScreenViewState extends State<LoginScreenView> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        // shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -124,6 +123,7 @@ class _LoginScreenViewState extends State<LoginScreenView> {
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: _isPasswordVisible ? Theme.of(context).primaryColor : null,
           ),
           onPressed: () {
             setState(() {
@@ -146,7 +146,7 @@ class _LoginScreenViewState extends State<LoginScreenView> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () {
-          // Navigate to forgot password screen
+          context.go('/forgotpass');
         },
         child: Text(
           'Forgot Password?',
