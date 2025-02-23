@@ -11,6 +11,7 @@ class CustomContainer extends StatelessWidget {
   final Color? backgroundColor;
   final Color? borderColor;
   final double? borderWidth;
+  final BoxDecoration? decoration;
 
   // Inner Stroke Properties
   final double? innerStrokeWidth;
@@ -56,6 +57,7 @@ class CustomContainer extends StatelessWidget {
     this.backgroundColor,
     this.borderColor,
     this.borderWidth,
+    this.decoration,
     this.innerStrokeWidth,
     this.innerStrokeColor,
     this.innerStrokeInset = false,
@@ -117,7 +119,7 @@ class CustomContainer extends StatelessWidget {
     );
 
     // Wrap with gesture detector if interactions are defined
-    Widget containerWidget = GestureDetector(
+    Widget containerWidget = InkWell(
       onTap: onTap,
       onLongPress: onLongPress,
       child: AnimatedContainer(
@@ -127,7 +129,7 @@ class CustomContainer extends StatelessWidget {
         height: height,
         margin: margin ?? const EdgeInsets.all(8.0),
         padding: padding ?? const EdgeInsets.all(12.0),
-        decoration: BoxDecoration(
+        decoration: decoration ?? BoxDecoration(
           color: backgroundColor,
           gradient: gradient,
           borderRadius: BorderRadius.circular(borderRadius),

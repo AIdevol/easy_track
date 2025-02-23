@@ -174,7 +174,39 @@ class _SignUpScreenViewState extends State<SignUpScreenView> {
   }
 
   Widget _buildSignUpButton(BuildContext context) {
-    return Container(
+    return CustomContainer(
+      // height: 50,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(4, 4),
+            blurRadius: 10,
+          ),
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-4, -4),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      onTap: (){
+        if (_formKey.currentState!.validate()) {
+          context.go('/home');
+        }
+      },
+      child: Center(child: const Text(
+        "Sign Up",
+        style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white
+        ),
+      ),),
+    )
+    /*Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -212,7 +244,7 @@ class _SignUpScreenViewState extends State<SignUpScreenView> {
               color: Theme.of(context).primaryColor),
         ),
       ),
-    );
+    )*/;
   }
 
   Widget _buildLoginSection(BuildContext context) {
