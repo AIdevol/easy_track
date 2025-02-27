@@ -13,7 +13,9 @@ class CustomTextField extends StatelessWidget {
   final Color? primaryColor;
   final int? maxLines;
   final bool isError;
+  final BoxDecoration? decoration;
   final String? initialValue;
+  final EdgeInsets? contentPadding;
 
   const CustomTextField({
     super.key,
@@ -21,6 +23,7 @@ class CustomTextField extends StatelessWidget {
     this.hintText,
     this.labelText,
     this.validator,
+    this.decoration,
     this.obscureText = false,
     this.keyboardType,
     this.onChanged,
@@ -30,6 +33,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines = 1,
     this.isError = false,
     this.initialValue,
+    this.contentPadding,
   });
 
   @override
@@ -37,7 +41,7 @@ class CustomTextField extends StatelessWidget {
     final defaultPrimaryColor = primaryColor ?? Theme.of(context).primaryColor;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: decoration??BoxDecoration(
         boxShadow: [
           BoxShadow(
             color: defaultPrimaryColor.withOpacity(0.1),

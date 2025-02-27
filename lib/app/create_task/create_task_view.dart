@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../utilities/custom_container.dart';
+
 class CreateTaskView extends StatelessWidget {
   const CreateTaskView({super.key});
 
@@ -26,7 +28,7 @@ class CreateTaskViewContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<CreateTaskViewBloc, CreateTaskViewState>(
       listenWhen: (previous, current) =>
-          previous.isSubmitting != current.isSubmitting ||
+      previous.isSubmitting != current.isSubmitting ||
           previous.error != current.error,
       listener: (context, state) {
         if (!state.isSubmitting && state.error != null) {
@@ -41,40 +43,90 @@ class CreateTaskViewContent extends StatelessWidget {
         backgroundColor: appColor,
         appBar: AppBar(
           backgroundColor: appColor,
-          title: const Text("Create Task"),
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            "Create Task",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
           leading: IconButton(
             onPressed: () => context.go('/home'),
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back_ios_new, size: 22),
           ),
         ),
-        body: const SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _TaskNameField(),
-                SizedBox(height: 16),
-                _TaskDescriptionField(),
-                SizedBox(height: 16),
-                _DateTimeSelector(),
-                SizedBox(height: 16),
-                _PrioritySelector(),
-                SizedBox(height: 16),
-                _CategorySelector(),
-                SizedBox(height: 16),
-                _ReminderSettings(),
-                SizedBox(height: 16),
-                _ProgressTracker(),
-                SizedBox(height: 16),
-                _SubtasksList(),
-                SizedBox(height: 16),
-                _IconSelector(),
-              ],
+        body: Container(
+          decoration: BoxDecoration(
+            color: appColor,
+            // borderRadius: BorderRadius.only(
+            //   topLeft: Radius.circular(30),
+            //   topRight: Radius.circular(30),
+            // ),
+          ),
+          child: const SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SectionTitle(title: "Task Details"),
+                  SizedBox(height: 16),
+                  _TaskNameField(),
+                  SizedBox(height: 16),
+                  _TaskDescriptionField(),
+                  SizedBox(height: 24),
+                  SectionTitle(title: "Schedule"),
+                  SizedBox(height: 16),
+                  _DateTimeSelector(),
+                  SizedBox(height: 24),
+                  SectionTitle(title: "Task Properties"),
+                  SizedBox(height: 16),
+                  _PrioritySelector(),
+                  SizedBox(height: 16),
+                  _CategorySelector(),
+                  SizedBox(height: 16),
+                  _ReminderSettings(),
+                  SizedBox(height: 16),
+                  _ProgressTracker(),
+                  SizedBox(height: 24),
+                  SectionTitle(title: "Subtasks"),
+                  SizedBox(height: 16),
+                  _SubtasksList(),
+                  SizedBox(height: 24),
+                  SectionTitle(title: "Customize"),
+                  SizedBox(height: 16),
+                  _IconSelector(),
+                  SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ),
         bottomNavigationBar: const _SaveButton(),
+      ),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  final String title;
+
+  const SectionTitle({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF333333),
+        ),
       ),
     );
   }
@@ -88,24 +140,31 @@ class _TaskNameField extends StatelessWidget {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) => previous.taskName != current.taskName,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomTextField(
+          hintText: "Task Name",
+          initialValue: state.taskName,
+          onChanged: (value) {
+            context.read<CreateTaskViewBloc>().add(TaskNameChanged(value));
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter a task name';
+            }
+            return null;
+          },
+          prefixIcon: const Icon(Icons.title, color: Color(0xFF666666)),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: CustomTextField(
-            hintText: "Task Name",
-            initialValue: state.taskName,
-            onChanged: (value) {
-              context.read<CreateTaskViewBloc>().add(TaskNameChanged(value));
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a task name';
-              }
-              return null;
-            },
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
         );
       },
@@ -120,23 +179,30 @@ class _TaskDescriptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) =>
-          previous.taskDescription != current.taskDescription,
+      previous.taskDescription != current.taskDescription,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomTextField(
+          hintText: "Task Description",
+          initialValue: state.taskDescription,
+          maxLines: 3,
+          onChanged: (value) {
+            context
+                .read<CreateTaskViewBloc>()
+                .add(TaskDescriptionChanged(value));
+          },
+          prefixIcon: const Icon(Icons.description, color: Color(0xFF666666)),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: CustomTextField(
-            hintText: "Task Description",
-            initialValue: state.taskDescription,
-            maxLines: 3,
-            onChanged: (value) {
-              context
-                  .read<CreateTaskViewBloc>()
-                  .add(TaskDescriptionChanged(value));
-            },
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
         );
       },
@@ -151,40 +217,65 @@ class _DateTimeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) =>
-          previous.dueDate != current.dueDate ||
+      previous.dueDate != current.dueDate ||
           previous.dueTime != current.dueTime,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomContainer(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Due Date & Time',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: appColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.calendar_today, color: appColor),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Schedule',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
-                    child: TextButton.icon(
-                      icon: const Icon(Icons.calendar_today),
-                      label: Text(
-                        state.dueDate == null
-                            ? 'Select Date'
-                            : DateFormat('MMM dd, yyyy').format(state.dueDate!),
-                      ),
-                      onPressed: () async {
+                    child: InkWell(
+                      onTap: () async {
                         final picked = await showDatePicker(
                           context: context,
                           initialDate: state.dueDate ?? DateTime.now(),
                           firstDate: DateTime.now(),
                           lastDate:
-                              DateTime.now().add(const Duration(days: 365)),
+                          DateTime.now().add(const Duration(days: 365)),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: ColorScheme.light(
+                                  primary: appColor,
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
                         );
                         if (picked != null) {
                           context
@@ -192,20 +283,56 @@ class _DateTimeSelector extends StatelessWidget {
                               .add(TaskDueDateChanged(picked));
                         }
                       },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: appColor.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: appColor.withOpacity(0.2)),
+                        ),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.calendar_month,
+                                size: 18,
+                                color: Color(0xFF666666),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                state.dueDate == null
+                                    ? 'Select Date'
+                                    : DateFormat('MMM dd, yyyy').format(state.dueDate!),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: TextButton.icon(
-                      icon: const Icon(Icons.access_time),
-                      label: Text(
-                        state.dueTime == null
-                            ? 'Select Time'
-                            : state.dueTime!.format(context),
-                      ),
-                      onPressed: () async {
+                    child: InkWell(
+                      onTap: () async {
                         final picked = await showTimePicker(
                           context: context,
                           initialTime: state.dueTime ?? TimeOfDay.now(),
+                          builder: (context, child) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                colorScheme: ColorScheme.light(
+                                  primary: appColor,
+                                ),
+                              ),
+                              child: child!,
+                            );
+                          },
                         );
                         if (picked != null) {
                           context
@@ -213,6 +340,34 @@ class _DateTimeSelector extends StatelessWidget {
                               .add(TaskDueTimeChanged(picked));
                         }
                       },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: appColor.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: appColor.withOpacity(0.2)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.access_time,
+                              size: 18,
+                              color: Color(0xFF666666),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              state.dueTime == null
+                                  ? 'Select Time'
+                                  : state.dueTime!.format(context),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -233,49 +388,137 @@ class _PrioritySelector extends StatelessWidget {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) => previous.priority != current.priority,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomContainer(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Priority',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              SegmentedButton<TaskPriority>(
-                segments: const [
-                  ButtonSegment(
-                    value: TaskPriority.low,
-                    label: Text('Low'),
-                    icon: Icon(Icons.flag, color: Colors.green),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: appColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.flag, color: appColor),
                   ),
-                  ButtonSegment(
-                    value: TaskPriority.medium,
-                    label: Text('Medium'),
-                    icon: Icon(Icons.flag, color: Colors.orange),
-                  ),
-                  ButtonSegment(
-                    value: TaskPriority.high,
-                    label: Text('High'),
-                    icon: Icon(Icons.flag, color: Colors.red),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Priority',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
-                selected: {state.priority},
-                onSelectionChanged: (selection) {
-                  context
-                      .read<CreateTaskViewBloc>()
-                      .add(TaskPriorityChanged(selection.first));
-                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _PriorityOption(
+                      label: 'Low',
+                      isSelected: state.priority == TaskPriority.low,
+                      color: Colors.green,
+                      onTap: () {
+                        context
+                            .read<CreateTaskViewBloc>()
+                            .add(TaskPriorityChanged(TaskPriority.low));
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _PriorityOption(
+                      label: 'Medium',
+                      isSelected: state.priority == TaskPriority.medium,
+                      color: Colors.orange,
+                      onTap: () {
+                        context
+                            .read<CreateTaskViewBloc>()
+                            .add(TaskPriorityChanged(TaskPriority.medium));
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _PriorityOption(
+                      label: 'High',
+                      isSelected: state.priority == TaskPriority.high,
+                      color: Colors.red,
+                      onTap: () {
+                        context
+                            .read<CreateTaskViewBloc>()
+                            .add(TaskPriorityChanged(TaskPriority.high));
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _PriorityOption extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _PriorityOption({
+    required this.label,
+    required this.isSelected,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withOpacity(0.1) : Colors.grey.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected ? color : Colors.grey.withOpacity(0.2),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              Icons.flag,
+              color: color,
+              size: 20,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? color : Colors.grey.shade700,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -287,30 +530,68 @@ class _CategorySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) =>
-          previous.categories != current.categories,
+      previous.categories != current.categories,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomContainer(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Categories',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: appColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.category, color: appColor),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Categories',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: state.categories.map((category) {
                   return FilterChip(
-                    label: Text(category.name),
+                    label: Text(
+                      category.name,
+                      style: TextStyle(
+                        color: category.isSelected ? Colors.white : Colors.black,
+                        fontWeight: category.isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    showCheckmark: false,
                     selected: category.isSelected,
-                    avatar: Icon(category.icon),
+                    backgroundColor: Colors.grey.withOpacity(0.1),
+                    selectedColor: appColor,
+                    avatar: Icon(
+                      category.icon,
+                      color: category.isSelected ? Colors.white : Colors.grey.shade700,
+                      size: 18,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     onSelected: (selected) {
                       context
                           .read<CreateTaskViewBloc>()
@@ -334,18 +615,36 @@ class _ReminderSettings extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) =>
-          previous.hasReminder != current.hasReminder,
+      previous.hasReminder != current.hasReminder,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomContainer(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
           child: Row(
             children: [
-              const Icon(Icons.notifications),
-              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: appColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.notifications,
+                  color: appColor,
+                ),
+              ),
+              const SizedBox(width: 12),
               const Text(
                 'Reminder',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -353,6 +652,7 @@ class _ReminderSettings extends StatelessWidget {
               const Spacer(),
               Switch(
                 value: state.hasReminder,
+                activeColor: appColor,
                 onChanged: (value) {
                   context
                       .read<CreateTaskViewBloc>()
@@ -375,38 +675,80 @@ class _ProgressTracker extends StatelessWidget {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) => previous.progress != current.progress,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomContainer(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Progress',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
               Row(
                 children: [
-                  Expanded(
-                    child: Slider(
-                      value: state.progress,
-                      min: 0,
-                      max: 100,
-                      divisions: 10,
-                      label: '${state.progress.round()}%',
-                      onChanged: (value) {
-                        context
-                            .read<CreateTaskViewBloc>()
-                            .add(TaskProgressChanged(value));
-                      },
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: appColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.trending_up, color: appColor),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Progress',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: appColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${state.progress.round()}%',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                  Text('${state.progress.round()}%'),
                 ],
+              ),
+              const SizedBox(height: 16),
+              SliderTheme(
+                data: SliderThemeData(
+                  trackHeight: 6,
+                  activeTrackColor: appColor,
+                  inactiveTrackColor: Colors.grey.withOpacity(0.2),
+                  thumbColor: Colors.white,
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 8,
+                    elevation: 4,
+                  ),
+                  overlayShape: SliderComponentShape.noOverlay,
+                ),
+                child: Slider(
+                  value: state.progress,
+                  min: 0,
+                  max: 100,
+                  divisions: 10,
+                  onChanged: (value) {
+                    context
+                        .read<CreateTaskViewBloc>()
+                        .add(TaskProgressChanged(value));
+                  },
+                ),
               ),
             ],
           ),
@@ -424,44 +766,126 @@ class _SubtasksList extends StatelessWidget {
     return BlocBuilder<CreateTaskViewBloc, CreateTaskViewState>(
       buildWhen: (previous, current) => previous.subtasks != current.subtasks,
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return CustomContainer(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: appColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.check_box, color: appColor),
+                  ),
+                  const SizedBox(width: 12),
                   const Text(
                     'Subtasks',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.add),
+                    icon: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: appColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ),
                     onPressed: () => _showAddSubtaskDialog(context),
                   ),
                 ],
               ),
+              if (state.subtasks.isEmpty) ...[
+                const SizedBox(height: 16),
+                Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.checklist,
+                        size: 48,
+                        color: Colors.grey.withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'No subtasks yet',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Add subtasks to break down your task',
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               if (state.subtasks.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                ListView.builder(
+                const SizedBox(height: 16),
+                ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.subtasks.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(state.subtasks[index]),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          context
-                              .read<CreateTaskViewBloc>()
-                              .add(SubtaskRemoved(index));
-                        },
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.circle,
+                            size: 8,
+                            color: Color(0xFF666666),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              state.subtasks[index],
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.redAccent,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              context
+                                  .read<CreateTaskViewBloc>()
+                                  .add(SubtaskRemoved(index));
+                            },
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -481,18 +905,44 @@ class _SubtasksList extends StatelessWidget {
         final controller = TextEditingController();
         return AlertDialog(
           title: const Text('Add Subtask'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Enter subtask',
+              filled: true,
+              fillColor: Colors.grey.withOpacity(0.1),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey.shade700),
+              ),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: appColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+              ),
               onPressed: () {
                 if (controller.text.isNotEmpty) {
                   context
@@ -501,7 +951,10 @@ class _SubtasksList extends StatelessWidget {
                   Navigator.pop(context);
                 }
               },
-              child: const Text('Add'),
+              child: const Text(
+                'Add',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -509,6 +962,7 @@ class _SubtasksList extends StatelessWidget {
     );
   }
 }
+
 
 class _IconSelector extends StatelessWidget {
   const _IconSelector();

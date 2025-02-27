@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../constants/colors.dart';
 import '../../../constants/images.dart';
+import '../../../utilities/neomorphic_monthly_date.dart';
 
 class ProfileScreenView extends StatelessWidget {
   const ProfileScreenView({super.key});
@@ -33,6 +34,7 @@ class ProfileScreenView extends StatelessWidget {
                 children: [
                   _mainScreen(context, state),
                   _buildNeumorphicGrid(),
+                  // MonthsCalendarView(),
                   _buildSettingsSection(context),
                 ],
               ),
@@ -189,7 +191,7 @@ class ProfileScreenView extends StatelessWidget {
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 10,
               crossAxisSpacing: 12,
@@ -197,6 +199,8 @@ class ProfileScreenView extends StatelessWidget {
             ),
             itemCount: 40,
             itemBuilder: (_, __) => Container(
+              height: 20,
+              width: 20,
               decoration: _buildNeumorphicDecoration(),
             ),
           ),
